@@ -1,4 +1,5 @@
 #include "sortserver.h"
+#include "cpuMergesort.h"
 
 #include <QtWebSockets>
 #include <QtCore>
@@ -56,12 +57,32 @@ void SortServer::onNewConnection()
 //! [processMessage]
 void SortServer::processMessage(const QString &message)
 {
-	printf("Message:%s\n",message.toUtf8().constData());
-    QWebSocket *pSender = qobject_cast<QWebSocket *>(sender());
-    for (QWebSocket *pClient : qAsConst(m_clients)) {
-        if (pClient != pSender) //don't echo message back to sender
-            pClient->sendTextMessage(message);
-    }
+	QJsonDocument jsonResponse = QJsonDocument::fromJson(message.toUtf8());
+	QJsonObject jsonObject = jsonResponse.object();
+	printf("Message:%s\n",jsonObject["original"].toString().toUtf8().constData());
+	
+	QStringList list = jsonObject["original"].toString().split(",",QString::SkipEmptyParts);
+	int *numbers = (int *)malloc(list.count()*sizeof(int));
+	int *sortnumbers = (int *)malloc(list.count()*sizeof(int));
+
+	for(int index=0; index < list.count(); index++) {
+		 numbers[index] = list[index].toInt();
+	}
+
+	mergesort_cpu(numbers, sortnumbers, list.count());
+
+	QStringList answerList;
+	for(int index=0; index < list.count(); index++) {
+		 answerList << QString::number(sortnumbers[index]);
+	}
+	
+	jsonObject["sorted"] = answerList.join(",");
+	QWebSocket *pSender = qobject_cast<QWebSocket *>(sender());
+	printf("origin %s\n",pSender->origin().toUtf8().constData());
+	pSender->sendTextMessage(QJsonDocument(jsonObject).toJson());
+
+	free(numbers);
+	free(sortnumbers);
 }
 //! [processMessage]
 
