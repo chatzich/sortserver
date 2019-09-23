@@ -7,7 +7,7 @@ enable_language(CUDA)
 enable_language(CXX)
 find_package(Qt5 COMPONENTS Core WebSockets REQUIRED)
 
-
+message(${CUDA_LIBRARIES})
 message(${CUDA_INCLUDE_DIRS})
 
 set(CMAKE_AUTOMOC ON)
@@ -19,15 +19,18 @@ find_package(Qt5 COMPONENTS Core Widgets Sql Concurrent REQUIRED)
 
 set(SORT_HEADER_FILES
 	sortserver.h
+	cuMergesort.h
  )
 
 set(SORT_SRC_FILES
 	sortserver.cpp
+	cuMergesort.cu
  )
 
 
 enable_testing()
 add_executable(sortserver main.cpp ${SORT_HEADER_FILES} ${SORT_SRC_FILES})
+target_link_libraries(sortserver ${CUDA_LIBRARIES})
 
 #add_executable(fibonacci_generator_test WIN32 ${DELPHIS_HEADER_FILES} ${TESTS_SRC_DIR}/fibonacci_generator_test.cpp )
 #add_test(NAME fibonacci_generator_test COMMAND fibonacci_generator_test)
