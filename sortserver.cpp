@@ -59,7 +59,6 @@ void SortServer::processMessage(const QString &message)
 {
 	QJsonDocument jsonResponse = QJsonDocument::fromJson(message.toUtf8());
 	QJsonObject jsonObject = jsonResponse.object();
-	printf("Message:%s\n",jsonObject["original"].toString().toUtf8().constData());
 	
 	QStringList list = jsonObject["original"].toString().split(",",QString::SkipEmptyParts);
 	int *numbers = (int *)malloc(list.count()*sizeof(int));
@@ -76,10 +75,8 @@ void SortServer::processMessage(const QString &message)
 		 answerList << QString::number(sortnumbers[index]);
 	}
 	
-	jsonObject["sorted"] = answerList.join(",");
 	QWebSocket *pSender = qobject_cast<QWebSocket *>(sender());
-	printf("origin %s\n",pSender->origin().toUtf8().constData());
-	pSender->sendTextMessage(QJsonDocument(jsonObject).toJson());
+	pSender->sendTextMessage(answerList.join(","));
 
 	free(numbers);
 	free(sortnumbers);
