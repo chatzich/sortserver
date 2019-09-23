@@ -32,7 +32,4 @@ enable_testing()
 add_executable(sortserver main.cpp ${SORT_HEADER_FILES} ${SORT_SRC_FILES})
 target_link_libraries(sortserver ${CUDA_LIBRARIES})
 
-#add_executable(fibonacci_generator_test WIN32 ${DELPHIS_HEADER_FILES} ${TESTS_SRC_DIR}/fibonacci_generator_test.cpp )
-#add_test(NAME fibonacci_generator_test COMMAND fibonacci_generator_test)
-
 qt5_use_modules(sortserver Core WebSockets)
