@@ -17,7 +17,7 @@ static QString getIdentifier(QWebSocket *peer)
 
 SortServer::SortServer(quint16 port, QObject *parent) :
     QObject(parent),
-    m_pWebSocketServer(new QWebSocketServer(QStringLiteral("SortServe"),
+    m_pWebSocketServer(new QWebSocketServer(QStringLiteral("SortServer"),
                                             QWebSocketServer::NonSecureMode,
                                             this))
 {
