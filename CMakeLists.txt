@@ -41,6 +41,7 @@ endif()
 
 qt5_use_modules(sortserver Core WebSockets)
 
+install (TARGETS sortserver DESTINATION bin)
 
 if (test)
 	find_package(GTest REQUIRED)
