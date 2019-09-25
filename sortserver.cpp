@@ -62,11 +62,11 @@ void SortServer::processMessage(const QString &message)
 	
 	QStringList list = jsonObject["original"].toString().split(",",QString::SkipEmptyParts);
 	qDebug() << "Request:" <<jsonObject["original"].toString();
-	int *numbers = (int *)malloc(list.count()*sizeof(int));
-	int *sortnumbers = (int *)malloc(list.count()*sizeof(int));
+	double *numbers = (double *)malloc(list.count()*sizeof(double));
+	double *sortnumbers = (double *)malloc(list.count()*sizeof(double));
 
 	for(int index=0; index < list.count(); index++) {
-		 numbers[index] = list[index].toInt();
+		 numbers[index] = list[index].toDouble();
 	}
 
 	mergesort_cpu(numbers, sortnumbers, list.count());

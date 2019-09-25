@@ -5,7 +5,7 @@
 // // // // // // // // // // // // // // // //
 //  GPU Implementation                       //
 // // // // // // // // // // // // // // // //
-__device__ void merge_gpu(int *list, int *sorted, int start, int mid, int end)
+__device__ void merge_gpu(double *list, double *sorted, int start, int mid, int end)
 {
     int k=start, i=start, j=mid;
     while (i<mid || j<end)
@@ -18,7 +18,7 @@ __device__ void merge_gpu(int *list, int *sorted, int start, int mid, int end)
     }
 }
 
-__global__ void mergesort_gpu(int *list, int *sorted, int n, int chunk){
+__global__ void mergesort_gpu(double *list, double *sorted, int n, int chunk){
 
     int tid = threadIdx.x + blockIdx.x * blockDim.x;
     int start = tid * chunk;
@@ -31,7 +31,7 @@ __global__ void mergesort_gpu(int *list, int *sorted, int n, int chunk){
 }
 
 // Sequential Merge Sort for GPU when Number of Threads Required gets below 1 Warp Size
-void mergesort_gpu_seq(int *list, int *sorted, int n, int chunk){
+void mergesort_gpu_seq(double *list, double *sorted, int n, int chunk){
     int chunk_id;
     for(chunk_id=0; chunk_id*chunk<=n; chunk_id++){
         int start = chunk_id * chunk, end, mid;

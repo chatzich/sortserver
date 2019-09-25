@@ -1,7 +1,7 @@
 // // // // // // // // // // // // // // // //
 //  CPU Implementation                       //
 // // // // // // // // // // // // // // // //
-void merge(int *list, int *sorted, int start, int mid, int end)
+void merge(double *list, double *sorted, int start, int mid, int end)
 {
     int ti=start, i=start, j=mid;
     while (i<mid || j<end)
@@ -17,7 +17,7 @@ void merge(int *list, int *sorted, int start, int mid, int end)
         list[ti] = sorted[ti];
 }
 
-void mergesort_recur(int *list, int *sorted, int start, int end)
+void mergesort_recur(double *list, double *sorted, int start, int end)
 {
     if (end-start<2)
         return;
@@ -27,7 +27,7 @@ void mergesort_recur(int *list, int *sorted, int start, int end)
     merge(list, sorted, start, start + (end-start)/2, end);
 }
 
-int mergesort_cpu(int *list, int *sorted, int n)
+int mergesort_cpu(double *list, double *sorted, int n)
 {
     mergesort_recur(list, sorted, 0, n);
     return 1;

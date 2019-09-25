@@ -48,7 +48,7 @@ if (test)
   include(GoogleTest)
   enable_testing()
 
-  add_executable(cpu_sort_test test.cpp cpuMergesort.h cpuMergesort.cpp)
+  add_executable(cpu_sort_test cpu_sort_test.cpp cpuMergesort.h cpuMergesort.cpp)
   target_link_libraries(cpu_sort_test ${GTEST_BOTH_LIBRARIES} pthread)
 
 
