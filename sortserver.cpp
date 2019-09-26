@@ -57,8 +57,13 @@ void SortServer::onNewConnection()
 //! [processMessage]
 void SortServer::processMessage(const QString &message)
 {
+	QWebSocket *pSender = qobject_cast<QWebSocket *>(sender());
 	QJsonDocument jsonResponse = QJsonDocument::fromJson(message.toUtf8());
 	QJsonObject jsonObject = jsonResponse.object();
+	if(jsonObject["ping"].toBool()) {
+		pSender->sendTextMessage("OK");
+		printf("Ping ok!\n");
+	}
 	
 	QStringList list = jsonObject["original"].toString().split(",",QString::SkipEmptyParts);
 	qDebug() << "Request:" <<jsonObject["original"].toString();
@@ -76,7 +81,6 @@ void SortServer::processMessage(const QString &message)
 		 answerList << QString::number(sortnumbers[index]);
 	}
 	
-	QWebSocket *pSender = qobject_cast<QWebSocket *>(sender());
 	QString response = answerList.join(",");
 	pSender->sendTextMessage(response);
 	qDebug() << "Response:" << response;
