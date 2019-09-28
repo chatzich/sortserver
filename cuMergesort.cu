@@ -1,5 +1,6 @@
 #include "cuMergesort.h"
-
+#include "cpuMergesort.cpp"
+#define MAX_DEPTH       16
 
 
 // // // // // // // // // // // // // // // //
@@ -43,10 +44,11 @@ void mergesort_gpu_seq(double *list, double *sorted, int n, int chunk){
 }
 
 
-int mergesort(int *list, int *sorted, int n){
 
-    int *list_d;
-    int *sorted_d;
+int mergesort_gpu(double *list, double *sorted, int n){
+
+    double *list_d;
+    double *sorted_d;
     int dummy;
     bool flag = false;
     bool sequential = false;
@@ -128,7 +130,8 @@ int mergesort(int *list, int *sorted, int n){
             return -1;
         }
 
-        if(sequential){
+        if(false){
+		printf("CPU RUN\n");
             // struct timespec start, stop;
             // clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &start);
             mergesort_gpu_seq(list, sorted, n, chunk_size);
@@ -139,6 +142,7 @@ int mergesort(int *list, int *sorted, int n){
             // printf("TIME TAKEN: %fms\n", result);
             // printf("####################################################\n");
         }else{
+		printf("GPU RUN\n");
             // float time;
             // cudaEvent_t start, stop;
             // cudaEventCreate(&start);

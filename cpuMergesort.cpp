@@ -27,7 +27,7 @@ void mergesort_recur(double *list, double *sorted, int start, int end)
     merge(list, sorted, start, start + (end-start)/2, end);
 }
 
-int mergesort_cpu(double *list, double *sorted, int n)
+int mergesort(double *list, double *sorted, int n)
 {
     mergesort_recur(list, sorted, 0, n);
     return 1;

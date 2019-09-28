@@ -1,4 +1,6 @@
+#pragma once
 #include <stdio.h>
 #include <time.h>
 
-extern int mergesort_cpu(double *list, double *sorted, int n);
+extern void merge(double *list, double *sorted, int start, int mid, int end);
+extern int mergesort(double *list, double *sorted, int n);

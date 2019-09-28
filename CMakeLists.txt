@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.3)
+cmake_minimum_required (VERSION 3.8)
 project(sortserver)
 
 option(test "Build all tests." OFF) # Makes boolean 'test' available.
@@ -16,44 +16,76 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 
-
-set(SORT_HEADER_FILES
+set(SERVER_HEADER_FILES
 	sortserver.h
+	)
+
+set(SERVER_SOURCE_FILES
+	sortserver.cpp
+	)
+
+set(CPU_SORT_HEADER_FILES
 	cpuMergesort.h
  )
 
-set(SORT_SRC_FILES
-	sortserver.cpp
+set(CPU_SORT_SRC_FILES
 	cpuMergesort.cpp
  )
 
-if(CUDA_FOUND)
-set(SORT_HEADER_FILES ${SORT_HEADER_FILES} cuMergesort.h)
-set(SORT_SRC_FILES ${SORT_SRC_FILES} cuMergesort.cu)
+set(GPU_SORT_HEADER_FILES
+	cuMergesort.h
+ )
+
+set(GPU_SORT_SRC_FILES
+	cuMergesort.cu
+ )
+
+
+
+    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -O3")
+    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -rdc=true")
+    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -arch=sm_35")
+
+option(USE_CUDA "Use CUDA" ON)
+
+if(USE_CUDA)
+	enable_language("CUDA")
+	add_library(sortserver_gpu SHARED mergesort.cu ${GPU_SORT_HEADER_FILES} ${GPU_SORT_SRC_FILES})
+	add_executable(sortserver main.cpp ${SERVER_HEADER_FILES} ${SERVER_SOURCE_FILES} ${CPU_SORT_HEADER_FILES} ${CPU_SORT_SRC_FILES})
+	target_link_libraries(sortserver sortserver_gpu)
+	qt5_use_modules(sortserver Core WebSockets)
+        add_executable(checker checker.cpp ${CPU_SORT_HEADER_FILES} ${CPU_SORT_SRC_FILES})
+	target_link_libraries(checker sortserver_gpu)
+        add_executable(mergesort mergesort.cu)
+else(USE_CUDA)
+        add_executable(sortserver main.cpp ${SERVER_HEADER_FILES} ${SERVER_SOURCE_FILES} ${CPU_SORT_HEADER_FILES} ${CPU_SORT_SRC_FILES})
+        add_executable(checker checker.c ${CPU_SORT_HEADER_FILES} ${CPU_SORT_SRC_FILES})
+	qt5_use_modules(sortserver Core WebSockets)
+endif()
+
+message(STATUS "USE_CUDA: ${USE_CUDA}")
+if(USE_CUDA)
+    add_definitions(-DUSE_CUDA)
 endif()
 
 
-add_executable(sortserver main.cpp ${SORT_HEADER_FILES} ${SORT_SRC_FILES})
 
-if(CUDA_FOUND)
-target_link_libraries(sortserver ${CUDA_LIBRARIES})
-endif()
-
-qt5_use_modules(sortserver Core WebSockets)
 
 install (TARGETS sortserver DESTINATION bin)
 
 if (test)
-	find_package(GTest REQUIRED)
+  find_package(GTest REQUIRED)
   include(GoogleTest)
   enable_testing()
 
   add_executable(cpu_sort_test cpu_sort_test.cpp cpuMergesort.h cpuMergesort.cpp)
   target_link_libraries(cpu_sort_test ${GTEST_BOTH_LIBRARIES} pthread)
+  add_executable(gpu_sort_test gpu_sort_test.cpp)
+  target_link_libraries(gpu_sort_test sortserver_gpu ${GTEST_BOTH_LIBRARIES} pthread)
 
 
-  #  add_test(NAME cpu-sorttest COMMAND cpu_sort_test)
-  gtest_add_tests(cpu_sort_test "" AUTO)
+ #  add_test(NAME cpu-sorttest COMMAND cpu_sort_test)
+  gtest_add_tests(gpu_sort_test "" AUTO)
 
 endif()
 
