@@ -1,6 +1,6 @@
 #include <iostream>
 #include <gtest/gtest.h>
-#include "cuMergesort.h"
+#include "gpuMergesort.h"
 #define ARRAY_SIZE 100
 TEST(AddTest, GPU_Test){
 

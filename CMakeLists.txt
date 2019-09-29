@@ -33,11 +33,11 @@ set(CPU_SORT_SRC_FILES
  )
 
 set(GPU_SORT_HEADER_FILES
-	cuMergesort.h
+	gpuMergesort.h
  )
 
 set(GPU_SORT_SRC_FILES
-	cuMergesort.cu
+	gpuMergesort.cu
  )
 
 

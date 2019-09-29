@@ -1,6 +1,6 @@
 #include "sortserver.h"
 #include "cpuMergesort.h"
-#include "cuMergesort.h"
+#include "gpuMergesort.h"
 
 #include <QtWebSockets>
 #include <QtCore>
