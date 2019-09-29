@@ -42,24 +42,20 @@ set(GPU_SORT_SRC_FILES
 
 
 
-    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -O3")
-    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -rdc=true")
-    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -arch=sm_35")
+set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -O3")
+set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -rdc=true")
+set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -arch=sm_35")
 
 option(USE_CUDA "Use CUDA" ON)
 
 if(USE_CUDA)
 	enable_language("CUDA")
-	add_library(sortserver_gpu SHARED mergesort.cu ${GPU_SORT_HEADER_FILES} ${GPU_SORT_SRC_FILES})
+	add_library(sortserver_gpu SHARED ${GPU_SORT_HEADER_FILES} ${GPU_SORT_SRC_FILES})
 	add_executable(sortserver main.cpp ${SERVER_HEADER_FILES} ${SERVER_SOURCE_FILES} ${CPU_SORT_HEADER_FILES} ${CPU_SORT_SRC_FILES})
 	target_link_libraries(sortserver sortserver_gpu)
 	qt5_use_modules(sortserver Core WebSockets)
-        add_executable(checker checker.cpp ${CPU_SORT_HEADER_FILES} ${CPU_SORT_SRC_FILES})
-	target_link_libraries(checker sortserver_gpu)
-        add_executable(mergesort mergesort.cu)
 else(USE_CUDA)
         add_executable(sortserver main.cpp ${SERVER_HEADER_FILES} ${SERVER_SOURCE_FILES} ${CPU_SORT_HEADER_FILES} ${CPU_SORT_SRC_FILES})
-        add_executable(checker checker.c ${CPU_SORT_HEADER_FILES} ${CPU_SORT_SRC_FILES})
 	qt5_use_modules(sortserver Core WebSockets)
 endif()
 
@@ -85,7 +81,9 @@ if (test)
 
 
  #  add_test(NAME cpu-sorttest COMMAND cpu_sort_test)
-  gtest_add_tests(gpu_sort_test "" AUTO)
+ gtest_add_tests(cpu_sort_test "" AUTO)
+ gtest_add_tests(gpu_sort_test "" AUTO)
+ # gtest_add_tests(gpu_sort_test "" AUTO)
 
 endif()
 

@@ -1,12 +1,11 @@
 #include "sortserver.h"
-//#include "cpuMergesort.h"
+#include "cpuMergesort.h"
+#include "cuMergesort.h"
 
 #include <QtWebSockets>
 #include <QtCore>
 
 #include <cstdio>
-extern int mergesort(double *list, double *sorted, int n);
-extern int mergesort_gpu(double *list, double *sorted, int n);
 using namespace std;
 
 QT_USE_NAMESPACE
@@ -76,16 +75,17 @@ void SortServer::processMessage(const QString &message)
 		 numbers[index] = list[index].toDouble();
 	}
 
+	QStringList answerList;
 #ifdef USE_CUDA
-	mergesort_gpu(numbers, sortnumbers, list.count());
+	mergesort_gpu(numbers, list.count());
+	for(int index=0; index < list.count(); index++) 
+		 answerList << QString::number(numbers[index]);
 #else
 	mergesort(numbers, sortnumbers, list.count());
+	for(int index=0; index < list.count(); index++) 
+		 answerList << QString::number(sortnumbers[index]);
 #endif
 
-	QStringList answerList;
-	for(int index=0; index < list.count(); index++) {
-		 answerList << QString::number(sortnumbers[index]);
-	}
 	
 	QString response = answerList.join(",");
 	pSender->sendTextMessage(response);

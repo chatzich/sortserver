@@ -1,6 +1,3 @@
-// // // // // // // // // // // // // // // //
-//  CPU Implementation                       //
-// // // // // // // // // // // // // // // //
 void merge(double *list, double *sorted, int start, int mid, int end)
 {
     int ti=start, i=start, j=mid;
